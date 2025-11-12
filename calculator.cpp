@@ -14,6 +14,18 @@ Calculator::~Calculator()
 
 void Calculator::createUI()
 {
+    // Create process display (shows calculation expression)
+    processDisplay = new QLineEdit("");
+    processDisplay->setReadOnly(true);
+    processDisplay->setAlignment(Qt::AlignRight);
+    processDisplay->setMaxLength(50);
+    
+    QFont processFont = processDisplay->font();
+    processFont.setPointSize(12);
+    processDisplay->setFont(processFont);
+    processDisplay->setMinimumHeight(30);
+    processDisplay->setStyleSheet("QLineEdit { color: gray; }");
+    
     // Create display
     display = new QLineEdit("0");
     display->setReadOnly(true);
@@ -27,6 +39,7 @@ void Calculator::createUI()
     
     // Create main layout
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(processDisplay);
     mainLayout->addWidget(display);
     
     // Create button grid layout
@@ -140,6 +153,21 @@ QPushButton* Calculator::createButton(const QString &text, const char *slot)
     return button;
 }
 
+void Calculator::updateProcessDisplay()
+{
+    if (storedValue.isEmpty()) {
+        processDisplay->setText("");
+    } else if (operation.isEmpty()) {
+        processDisplay->setText(storedValue);
+    } else {
+        QString processText = storedValue + " " + operation;
+        if (!waitingForOperand) {
+            processText += " " + display->text();
+        }
+        processDisplay->setText(processText);
+    }
+}
+
 void Calculator::digitClicked()
 {
     QPushButton *button = qobject_cast<QPushButton*>(sender());
@@ -159,6 +187,8 @@ void Calculator::digitClicked()
         }
         display->setText(display->text() + digit);
     }
+    
+    updateProcessDisplay();
 }
 
 void Calculator::operatorClicked()
@@ -184,6 +214,7 @@ void Calculator::operatorClicked()
                 result = storedVal / currentDisplayValue;
             } else {
                 display->setText("Error");
+                processDisplay->setText("");
                 storedValue.clear();
                 operation.clear();
                 waitingForOperand = true;
@@ -199,6 +230,7 @@ void Calculator::operatorClicked()
     
     operation = op;
     waitingForOperand = true;
+    updateProcessDisplay();
 }
 
 void Calculator::equalClicked()
@@ -211,6 +243,9 @@ void Calculator::equalClicked()
     double storedVal = storedValue.toDouble();
     double result = 0.0;
     
+    // Store the complete calculation expression before computing
+    QString calculationExpression = storedValue + " " + operation + " " + display->text();
+    
     if (operation == "+") {
         result = storedVal + currentDisplayValue;
     } else if (operation == "-") {
@@ -222,6 +257,7 @@ void Calculator::equalClicked()
             result = storedVal / currentDisplayValue;
         } else {
             display->setText("Error");
+            processDisplay->setText("");
             storedValue.clear();
             operation.clear();
             waitingForOperand = true;
@@ -229,6 +265,8 @@ void Calculator::equalClicked()
         }
     }
     
+    // Show complete calculation with result
+    processDisplay->setText(calculationExpression + " =");
     display->setText(QString::number(result));
     storedValue.clear();
     operation.clear();
@@ -238,6 +276,7 @@ void Calculator::equalClicked()
 void Calculator::clearClicked()
 {
     display->setText("0");
+    processDisplay->setText("");
     storedValue.clear();
     operation.clear();
     waitingForOperand = false;
