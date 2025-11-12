@@ -25,7 +25,9 @@ private slots:
 private:
     void createUI();
     QPushButton* createButton(const QString &text, const char *slot);
+    void updateProcessDisplay();
     
+    QLineEdit *processDisplay;
     QLineEdit *display;
     QString currentValue;
     QString storedValue;
