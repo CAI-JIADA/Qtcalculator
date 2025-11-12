@@ -5,7 +5,8 @@ A basic calculator application built with Qt5 featuring:
 ![Calculator Screenshot](screenshot.png)
 
 ## Features
-- **Display Screen**: Large display with right-aligned text input
+- **Process Display**: Shows the calculation expression as you type (e.g., "5 + 3 =")
+- **Display Screen**: Large display with right-aligned text showing the result
 - **Number Buttons**: 0-9 digits and decimal point
 - **Basic Operations**:
   - Addition (+)
@@ -42,10 +43,12 @@ make
 ```
 
 ## Layout
-The calculator features a 4×4 button grid with a display screen on top:
+The calculator features a 4×4 button grid with two display screens on top:
 ```
 ┌─────────────────────────┐
-│      Display (0)        │
+│   Process (5 + 3 =)     │  ← Shows calculation expression
+├─────────────────────────┤
+│      Display (8)        │  ← Shows current number/result
 ├─────┬─────┬─────┬─────┤
 │  C  │  C  │  ⌫  │  ÷  │
 ├─────┼─────┼─────┼─────┤
@@ -61,9 +64,9 @@ The calculator features a 4×4 button grid with a display screen on top:
 
 ## Usage
 1. Click number buttons to enter digits
-2. Click an operation button (+, -, ×, ÷)
-3. Enter the second number
-4. Click equals (=) to see the result
+2. Click an operation button (+, -, ×, ÷) - the process display will show your first number and the operation
+3. Enter the second number - the process display will show the complete expression (e.g., "5 + 3")
+4. Click equals (=) to see the result - the process display will show "5 + 3 =" and the main display will show "8"
 5. Use Clear (C) to reset or Delete (⌫) to remove the last digit
 
 ## License
